@@ -1,0 +1,30 @@
+# Base de données SQLite Django
+db.sqlite3
+
+# Fichiers de migration (optionnel à ignorer, mais souvent on versionne ces fichiers)
+# **/migrations/*.pyc
+# **/migrations/__pycache__/
+
+# Fichiers de cache Python
+__pycache__/
+*.py[cod]
+
+# Dossiers d'environnement virtuel (à adapter selon ton setup)
+env/
+venv/
+.venv/
+
+# Fichiers Poetry
+poetry.lock
+__pypackages__/
+
+# Fichiers Django communs à ignorer
+*.log
+*.pot
+*.pyc
+*.pyo
+*.swp
+
+# IDEs / éditeurs
+.vscode/
+.idea/
