@@ -66,6 +66,6 @@ connaître son importance.
 la nature de l'issue.
 
 - Enfin, les contributeurs doivent pouvoir émettre un statut de progression (To
-Do, In Progress ou Finished). Par défaut, une issue est en To 
+Do, In Progress ou Finished). Par défaut, une issue est en To
 
- """
+"""
