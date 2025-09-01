@@ -1,9 +1,13 @@
-from rest_framework                                                 import viewsets
-from rest_framework.permissions                                     import IsAuthenticatedOrReadOnly
-from project.permissions                                            import IsAuthor, IsAuthorOfProject, IsCollab
-from .models                                                        import Comment, Contributor, Issue, Project
-from .serializers                                                   import (CommentSerializer, ContributorSerializer,
-                                                                            IssueSerializer, ProjectSerializer)
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from project.permissions import IsAuthor, IsAuthorOfProject, IsCollab
+from .models import Comment, Contributor, Issue, Project
+from .serializers import (
+    CommentSerializer,
+    ContributorSerializer,
+    IssueSerializer,
+    ProjectSerializer,
+)
 
 
 class ContributorViewSet(viewsets.ModelViewSet):
@@ -50,4 +54,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         project = serializer.save(author=self.request.user)
-        Contributor.objects.get_or_create(project=project, user=self.request.user)
+        Contributor.objects.get_or_create(
+            project=project, user=self.request.user
+        )

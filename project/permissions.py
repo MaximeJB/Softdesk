@@ -1,5 +1,5 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
-from project.models             import Contributor, Project
+from project.models import Contributor, Project
 
 
 class IsAuthor(BasePermission):
@@ -21,7 +21,9 @@ class IsCollab(BasePermission):
             project = obj.issue.project
         else:
             project = obj.project
-        return Contributor.objects.filter(project=project, user=request.user).exists()
+        return Contributor.objects.filter(
+            project=project, user=request.user
+        ).exists()
 
     def has_permission(self, request, view):
         project_pk = view.kwargs.get("project_pk")

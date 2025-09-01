@@ -1,6 +1,6 @@
 import uuid
-from django.db          import models
-from accounts.models    import CustomUser
+from django.db import models
+from accounts.models import CustomUser
 
 
 class Comment(models.Model):
@@ -74,7 +74,9 @@ class Project(models.Model):
         CustomUser, on_delete=models.PROTECT, related_name="projects"
     )
     name = models.CharField(max_length=100)
-    contributors = models.ManyToManyField(CustomUser, through="project.Contributor")
+    contributors = models.ManyToManyField(
+        CustomUser, through="project.Contributor"
+    )
     description = models.TextField(max_length=5000)
     TYPE_CHOICES = [
         ("backend", "Backend"),

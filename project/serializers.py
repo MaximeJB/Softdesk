@@ -1,7 +1,7 @@
-from rest_framework         import serializers
-from accounts.models        import CustomUser
-from accounts.serializers   import UserSerializer
-from .models                import Comment, Contributor, Issue, Project
+from rest_framework import serializers
+from accounts.models import CustomUser
+from accounts.serializers import UserSerializer
+from .models import Comment, Contributor, Issue, Project
 
 
 class ContributorSerializer(serializers.ModelSerializer):

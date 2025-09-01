@@ -1,6 +1,6 @@
-from django.contrib.auth    import get_user_model
-from rest_framework         import viewsets
-from accounts.serializers   import UserCreateSerializer, UserSerializer
+from django.contrib.auth import get_user_model
+from rest_framework import viewsets
+from accounts.serializers import UserCreateSerializer, UserSerializer
 
 User = get_user_model()
 
