@@ -8,8 +8,10 @@ User = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
-    """
 
+    "create" use UserCreateSerializer
+    other actions use UserSerializer
+    """
     queryset = User.objects.all().order_by("-date_joined")
 
     def get_serializer_class(self):

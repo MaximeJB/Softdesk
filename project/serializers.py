@@ -5,6 +5,13 @@ from .models import Comment, Contributor, Issue, Project
 
 
 class ContributorSerializer(serializers.ModelSerializer):
+    """
+    Serializer for contributors to a project
+
+    Attributes : 
+        user : contributor username via slug
+        project : (id) : related project
+    """
     user = serializers.SlugRelatedField(
         queryset=CustomUser.objects.all(), slug_field="username"
     )
@@ -18,6 +25,13 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    """
+    Serializer for project objects
+
+    Attributes :
+        author : read only nested user serializer 
+        contributors : list of contributors
+    """
     author = UserSerializer(read_only=True)
     contributors = ContributorSerializer(
         many=True, read_only=True, source="contributor_set"
@@ -29,6 +43,14 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class IssueSerializer(serializers.ModelSerializer):
+    """
+    Serializer for issue object.
+
+    Attributes:
+        attribution : username via slug
+        project : (id): related project
+        author : auto-attribution
+    """
     attribution = serializers.SlugRelatedField(
         slug_field="username", queryset=CustomUser.objects.all(), required=True
     )
@@ -59,6 +81,14 @@ class IssueSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for comment objects.
+
+    Attributes:
+        author : read-only nested for the comment author
+        issue : related issue
+    
+    """
     author = UserSerializer(read_only=True)
     issue = serializers.ReadOnlyField(source="issue.id")
 

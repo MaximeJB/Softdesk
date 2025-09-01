@@ -4,6 +4,16 @@ from accounts.models import CustomUser
 
 
 class Comment(models.Model):
+    """
+    Model representing a comment made by a user on an issue
+
+    Attributes : 
+    id : UUID: Primary key
+    description : text content
+    author (ForeignKey) 
+    issue (ForeignKey): related issue
+    time_created (DateTimeField): Timestamp
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     description = models.TextField(max_length=5000)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -17,6 +27,17 @@ class Comment(models.Model):
 
 
 class Contributor(models.Model):
+    """
+    Model representing a user contributing to ressources
+
+    Attributes : 
+    project (ForeignKey): related project
+    user (ForeignKey): user 
+    time_created : timestamp 
+
+    Constraints : 
+    unicity for project,user combination
+    """
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     time_created = models.DateTimeField(auto_now_add=True)
@@ -30,6 +51,20 @@ class Contributor(models.Model):
 
 
 class Issue(models.Model):
+    """
+    Model representing an Issue in a project
+
+    Attributes:
+    name (Charfield): name
+    description (Textfield): description
+    author (ForeignKey): author
+    time_created : timestamp
+    status (Charfield): current status (todo, progress, finished)
+    tag (Charfield): (bug, feature, task)
+    priority (Charfield): (low, medium, high)
+    attribution (ForeignKey): user assigned
+    project (ForeignKey): related project
+    """
     STATUS_TODO = "todo"
     [(STATUS_TODO.lower(), STATUS_TODO)]
 
@@ -69,6 +104,17 @@ class Issue(models.Model):
 
 
 class Project(models.Model):
+    """
+    Model representing a project.
+    
+    Attributes:
+        time_created (DateTimeField): Creation timestamp.
+        author (ForeignKey): Project creator.
+        name (CharField): Project name.
+        contributors (ManyToManyField): Users contributing to the project.
+        description (TextField): Project description.
+        project_type (CharField): Type (backend, frontend, ios, android).
+    """
     time_created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
         CustomUser, on_delete=models.PROTECT, related_name="projects"
