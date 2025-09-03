@@ -32,7 +32,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         author : read only nested user serializer 
         contributors : list of contributors
     """
-    author = UserSerializer(read_only=True)
+    author = serializers.ReadOnlyField(source="author.username")
     contributors = ContributorSerializer(
         many=True, read_only=True, source="contributor_set"
     )
@@ -89,7 +89,7 @@ class CommentSerializer(serializers.ModelSerializer):
         issue : related issue
     
     """
-    author = UserSerializer(read_only=True)
+    author = serializers.ReadOnlyField(source="author.username")
     issue = serializers.ReadOnlyField(source="issue.id")
 
     class Meta:
