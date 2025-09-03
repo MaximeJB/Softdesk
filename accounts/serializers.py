@@ -41,8 +41,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
     """
     password = serializers.CharField(write_only=True, required=True)
     age = serializers.IntegerField(write_only=True, required=True)
-    can_be_contacted = serializers.BooleanField(required=True)
-    can_data_be_shared = serializers.BooleanField(required=True)
+    can_be_contacted = serializers.BooleanField()
+    can_data_be_shared = serializers.BooleanField()
 
     class Meta:
         model = User

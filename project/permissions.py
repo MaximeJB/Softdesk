@@ -10,7 +10,6 @@ class IsAuthor(BasePermission):
     Other methods : are only allowed if the requesting user is the author of the object
     """
     message = "This action is restricted to the author only"
-
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
@@ -30,15 +29,15 @@ class IsCollab(BasePermission):
     message = "This action is restricted to the collaborators only"
 
     def has_object_permission(self, request, view, obj):
-        if isinstance(obj, Project):
-            project = obj
-        elif hasattr(obj, "issue"):
-            project = obj.issue.project
-        else:
-            project = obj.project
-        return Contributor.objects.filter(
-            project=project, user=request.user
-        ).exists()
+        project = getattr(obj, "project", None)
+        if project is None:
+            issue = getattr(obj, "issue", None)
+            if issue is not None:
+                project = getattr(issue, "project", None)
+
+        if project is None:
+            return False
+        return Contributor.objects.filter(project=project, user=request.user).exists()
 
     def has_permission(self, request, view):
         project_pk = view.kwargs.get("project_pk")
@@ -71,10 +70,14 @@ class IsAuthorOfProject(BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        if hasattr(obj, "issue"):
-            return obj.issue.project.author == request.user
-        elif hasattr(obj, "project"):
-            return obj.project.author == request.user
-        elif isinstance(obj, Project):
-            return obj.author == request.user
-        return False
+        project = getattr(obj, "project", None)
+
+        if project is None:
+            issue = getattr(obj, "issue", None)
+            if issue is not None:
+                project = getattr(issue, "project", None)
+
+        if project is None:
+            return False
+
+        return project.author == request.user

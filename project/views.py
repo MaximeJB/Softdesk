@@ -18,7 +18,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
         - authenticated
         - write : only project authors (admin)
     """
-    queryset = Contributor.objects.all()
+    queryset = Contributor.objects.select_related("user", "project")
     serializer_class = ContributorSerializer
     permission_classes = [IsAuthenticated, IsAuthorOfProject]
 
@@ -35,13 +35,23 @@ class CommentViewSet(viewsets.ModelViewSet):
     Permissions:
         -Restricted to collaborators and comment authors.
     """
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().select_related('author', 'issue', 'issue__project')
     serializer_class = CommentSerializer
     permission_classes = [IsCollab, IsAuthor]
 
     def perform_create(self, serializer):
         issue_id = self.kwargs.get("issue_pk")
         serializer.save(author=self.request.user, issue_id=issue_id)
+
+    def get_object(self):
+        """
+        Surcharging to connect the project.object to the Comment instance, easier for the permission 
+        without the N+1 request
+        """
+        obj = super().get_object()
+        if hasattr(obj, "issue") and getattr(obj.issue, "project", None) is not None:
+            obj.project = obj.issue.project
+        return obj
 
 
 class IssueViewSet(viewsets.ModelViewSet):
@@ -51,7 +61,7 @@ class IssueViewSet(viewsets.ModelViewSet):
     Permissions:
         -restricted to collaborators and issue authors.
     """
-    queryset = Issue.objects.all()
+    queryset = Issue.objects.select_related("author", "project")
     serializer_class = IssueSerializer
     permission_classes = [IsCollab, IsAuthor]
 
@@ -59,10 +69,11 @@ class IssueViewSet(viewsets.ModelViewSet):
         """
         Filter issues by project 
         """
+        qs = self.queryset
         project_id = self.kwargs.get("project_pk")
         if project_id:
-            return Issue.objects.filter(project_id=project_id)
-        return Issue.objects.all()
+            return qs.filter(project_id=project_id)
+        return qs
 
     def perform_create(self, serializer):
         """
@@ -80,7 +91,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         -Authenticated can create
         -Collaborators and authors can update/delete
     """
-    queryset = Project.objects.all()
+    queryset = Project.objects.select_related("author").prefetch_related("contributor_set__user")
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated, IsCollab, IsAuthor]
 

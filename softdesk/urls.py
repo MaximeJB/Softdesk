@@ -23,8 +23,7 @@ projects_router = routers.NestedDefaultRouter(
     router, r"projects", lookup="project"
 )
 projects_router.register(r"issues", IssueViewSet, basename="project-issues")
-projects_router.register(
-    r"contributors", ContributorViewSet, basename="project-contributors"
+projects_router.register(r"contributors", ContributorViewSet, basename="project-contributors"
 )
 issues_router = routers.NestedDefaultRouter(
     projects_router, r"issues", lookup="issue"

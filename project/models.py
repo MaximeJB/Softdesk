@@ -16,7 +16,7 @@ class Comment(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     description = models.TextField(max_length=5000)
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL,null=True, blank=False)
     issue = models.ForeignKey(
         "Issue", on_delete=models.CASCADE, null=False, blank=False
     )
@@ -71,7 +71,7 @@ class Issue(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=5000)
     author = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="issues"
+        CustomUser, on_delete=models.SET_NULL, null=True, blank=False, related_name="issues"
     )
     time_created = models.DateTimeField(auto_now_add=True)
 
@@ -117,7 +117,7 @@ class Project(models.Model):
     """
     time_created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
-        CustomUser, on_delete=models.PROTECT, related_name="projects"
+        CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="projects"
     )
     name = models.CharField(max_length=100)
     contributors = models.ManyToManyField(
