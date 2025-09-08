@@ -27,7 +27,7 @@ Optimisations ORM (`select_related` / `prefetch_related`) pour limiter les requ�
 - Consentements : champs (`can_be_contacted`) et (`can_data_be_shared`) collectés à l'inscription.
 - Âge minimum : validation (≥ 15 ans) dans le serializer d'inscription.
 - Minimisation des données exposées : les réponses exposent l’author par username 
-- Droit à l’oubli / anonymisation : modèles configurables pour on_delete=SET_NULL ou SET(get_deleted_user) afin de permettre anonymisation plutôt que perte de données collectives.
+- Droit à l’oubli / anonymisation : modèles configurables pour on_delete=SET_NULLafin de permettre anonymisation plutôt que perte de données collectives.
 - Authentification : JWT (djangorestframework-simplejwt) pour sécuriser l’accès API.
 - Permissions fines : IsAuthor, IsCollab, IsAuthorOfProject pour contrôler lecture/écriture au niveau objet.
 - Protection contre N+1 : utilisation de select_related / prefetch_related pour limiter les requêtes inutiles.
