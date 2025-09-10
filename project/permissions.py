@@ -42,7 +42,7 @@ class IsCollab(BasePermission):
     def has_permission(self, request, view):
         project_pk = view.kwargs.get("project_pk")
         if project_pk is None:
-            return True
+            return request.user.is_authenticated
         return Contributor.objects.filter(
             project_id=project_pk, user=request.user
         ).exists()
@@ -58,16 +58,13 @@ class IsAuthorOfProject(BasePermission):
     message = "Only the project author can add contributors."
 
     def has_permission(self, request, view):
-        if request.method in SAFE_METHODS:
-            return True
         project_pk = view.kwargs.get("project_pk")
-        if project_pk:
-            try:
-                project = Project.objects.get(pk=project_pk)
-            except Project.DoesNotExist:
-                return False
-            return project.author == request.user
-        return True
+        if project_pk is None:
+                return True
+
+        is_author = Project.objects.filter(pk=project_pk, author=request.user).exists()
+        is_contributor = Contributor.objects.filter(project_id=project_pk, user=request.user).exists()
+        return is_author or is_contributor
 
     def has_object_permission(self, request, view, obj):
         project = getattr(obj, "project", None)

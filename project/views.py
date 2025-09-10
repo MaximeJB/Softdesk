@@ -8,7 +8,7 @@ from .serializers import (
     IssueSerializer,
     ProjectSerializer,
 )
-
+from django.db import models
 
 class ContributorViewSet(viewsets.ModelViewSet):
     """
@@ -38,6 +38,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().select_related('author', 'issue', 'issue__project')
     serializer_class = CommentSerializer
     permission_classes = [IsCollab, IsAuthor]
+
+    def get_queryset(self):
+        issue_pk = self.kwargs.get("issue_pk")
+        if issue_pk is None:
+            return super().get_queryset().order_by("time_created")
+        return self.queryset.filter(issue_id=issue_pk).order_by("time_created")
 
     def perform_create(self, serializer):
         issue_id = self.kwargs.get("issue_pk")
@@ -94,6 +100,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.select_related("author").prefetch_related("contributor_set__user")
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated, IsCollab, IsAuthor]
+
+    def get_queryset(self):
+        #change
+        """
+        Ne renvoyer que les projets où l'utilisateur est auteur ou contributeur.
+        Cela empêche un utilisateur non-collaborateur de voir tous les projets.
+        """
+        user = self.request.user
+        return self.queryset.filter(models.Q(author=user) | models.Q(contributor__user=user)).distinct()
 
     def perform_create(self, serializer):
         """

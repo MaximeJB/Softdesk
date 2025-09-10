@@ -16,18 +16,13 @@ from project.views import (
 
 router = routers.DefaultRouter()
 router.register(r"users", UserViewSet)
-router.register(r"comments", CommentViewSet)
 router.register(r"projects", ProjectViewSet)
 
-projects_router = routers.NestedDefaultRouter(
-    router, r"projects", lookup="project"
-)
+projects_router = routers.NestedDefaultRouter(router, r"projects", lookup="project")
 projects_router.register(r"issues", IssueViewSet, basename="project-issues")
-projects_router.register(r"contributors", ContributorViewSet, basename="project-contributors"
-)
-issues_router = routers.NestedDefaultRouter(
-    projects_router, r"issues", lookup="issue"
-)
+projects_router.register(r"contributors", ContributorViewSet, basename="project-contributors")
+
+issues_router = routers.NestedDefaultRouter(projects_router, r"issues", lookup="issue")
 issues_router.register(r"comments", CommentViewSet, basename="issue-comment")
 
 urlpatterns = [
