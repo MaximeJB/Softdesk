@@ -22,6 +22,12 @@ class ContributorViewSet(viewsets.ModelViewSet):
     serializer_class = ContributorSerializer
     permission_classes = [IsAuthenticated, IsAuthorOfProject]
 
+    def get_queryset(self):
+        project_pk = self.kwargs.get("project_pk")
+        if project_pk:
+            return self.queryset.filter(project_id=project_pk).order_by("time_created")
+        return self.queryset.order_by("time_created")
+
     def perform_create(self, serializer):
         project_pk = self.kwargs.get("project_pk")
         project = Project.objects.get(pk=project_pk)
