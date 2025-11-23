@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from project.permissions import IsAuthor, IsAuthorOfProject, IsCollab
 from .models import Comment, Contributor, Issue, Project
+from django.shortcuts import get_object_or_404
 from .serializers import (
     CommentSerializer,
     ContributorSerializer,
@@ -30,7 +31,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         project_pk = self.kwargs.get("project_pk")
-        project = Project.objects.get(pk=project_pk)
+        project = get_object_or_404(Project, pk=project_pk)
         serializer.save(project=project)
 
 
@@ -108,7 +109,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsCollab, IsAuthor]
 
     def get_queryset(self):
-        #change
         """
         Ne renvoyer que les projets où l'utilisateur est auteur ou contributeur.
         Cela empêche un utilisateur non-collaborateur de voir tous les projets.
