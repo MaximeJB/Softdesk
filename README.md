@@ -42,10 +42,110 @@ Optimisations ORM (`select_related` / `prefetch_related`) pour limiter les requ�
 - (optionnel) PostgreSQL / autre base si voulu (par défaut SQLite)
 
 ### Installation locale (avec Poetry)
-```bash
-# cloner
-git clone <https://github.com/MaximeJB/softdesk/>
-cd SoftDesk
 
-# installer dépendances
+**Étape 1 : Cloner le repository**
+```bash
+git clone https://github.com/MaximeJB/softdesk/
+cd SoftDesk
+```
+
+**Étape 2 : Installer les dépendances**
+```bash
 poetry install
+```
+
+**Étape 3 : Activer l'environnement virtuel**
+```bash
+poetry shell
+```
+
+**Étape 4 : Appliquer les migrations de base de données**
+```bash
+python manage.py migrate
+```
+
+**Étape 5 (optionnel) : Créer un superutilisateur**
+```bash
+python manage.py createsuperuser
+```
+
+**Étape 6 : Démarrer le serveur**
+```bash
+python manage.py runserver
+```
+
+Le projet est maintenant accessible sur `http://127.0.0.1:8000/`
+
+---
+
+## Utilisation de l'API
+
+### Authentification
+
+**1. Créer un compte utilisateur**
+```bash
+POST http://127.0.0.1:8000/users/
+Content-Type: application/json
+
+{
+  "username": "john",
+  "password": "Pass123!",
+  "email": "john@example.com",
+  "age": 25,
+  "can_be_contacted": true,
+  "can_data_be_shared": false
+}
+```
+
+**2. Obtenir un token JWT**
+```bash
+POST http://127.0.0.1:8000/api/token/
+Content-Type: application/json
+
+{
+  "username": "john",
+  "password": "Pass123!"
+}
+```
+
+Réponse : `{"access": "...", "refresh": "..."}`
+
+**3. Utiliser le token dans les requêtes**
+```bash
+Authorization: Bearer <access_token>
+```
+
+### Endpoints disponibles
+
+**Projets**
+```bash
+GET    /projects/              # Liste des projets
+POST   /projects/              # Créer un projet (type: backend/frontend/ios/android)
+GET    /projects/{id}/         # Détails d'un projet
+PUT    /projects/{id}/         # Modifier (auteur uniquement)
+DELETE /projects/{id}/         # Supprimer (auteur uniquement)
+```
+
+**Contributeurs**
+```bash
+GET    /projects/{id}/contributors/       # Liste des contributeurs
+POST   /projects/{id}/contributors/       # Ajouter un contributeur (auteur uniquement)
+DELETE /projects/{id}/contributors/{id}/  # Retirer un contributeur (auteur uniquement)
+```
+
+**Issues**
+```bash
+GET    /projects/{id}/issues/           # Liste des issues
+POST   /projects/{id}/issues/           # Créer (priority: low/medium/high, tag: bug/feature/task)
+GET    /projects/{id}/issues/{id}/      # Détails
+PUT    /projects/{id}/issues/{id}/      # Modifier (auteur de l'issue uniquement)
+DELETE /projects/{id}/issues/{id}/      # Supprimer (auteur de l'issue uniquement)
+```
+
+**Commentaires**
+```bash
+GET    /projects/{id}/issues/{id}/comments/       # Liste des commentaires
+POST   /projects/{id}/issues/{id}/comments/       # Créer un commentaire
+GET    /projects/{id}/issues/{id}/comments/{id}/  # Détails
+PUT    /projects/{id}/issues/{id}/comments/{id}/  # Modifier (auteur uniquement)
+DELETE /projects/{id}/issues/{id}/comments/{id}/  # Supprimer (auteur uniquement)
